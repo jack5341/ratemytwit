@@ -5,7 +5,7 @@ import dotenv from "dotenv"
 import logger from 'morgan';
 import mongoose from "mongoose"
 
-import feed from "./routes/feed"
+import feed from "./routes/feed.js"
 
 var app = express();
 
@@ -14,7 +14,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join("/", 'public')));
 app.use("/api", feed)
 
 // error handler
@@ -29,12 +29,14 @@ app.use(function(err, req, res, next) {
 });
 
 // Database connection...
-mongoose.connect( process.env.DB_CONNECT, 
-    { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
-             .then(() => console.log( 'Database Connected' ))
-             .catch(err => console.log( err ));    
+mongoose.connect(process.env.DB_CONNECT, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('MongoDB connection established.'))
+.catch((error) => console.error("MongoDB connection failed:", error.message))
 
-module.exports = app;
+export default app
 
 /* Endpoint list
     POST /api/feed -sharing a post on feed-
