@@ -1,10 +1,9 @@
 import express from 'express';
-import path from 'path';
 import cookieParser from 'cookie-parser';
 import dotenv from "dotenv"
 import logger from 'morgan';
 import mongoose from "mongoose"
-
+import bodyParser from "body-parser"
 import feed from "./routes/feed.js"
 
 var app = express();
@@ -12,9 +11,8 @@ var app = express();
 dotenv.config()
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser());
-app.use(express.static(path.join("/", 'public')));
 app.use("/api", feed)
 
 // error handler
@@ -39,6 +37,7 @@ mongoose.connect(process.env.DB_CONNECT, {
 export default app
 
 /* Endpoint list
+    GET /api/feed -get all posts and pagination by query-
     POST /api/feed -sharing a post on feed-
     PUT /api/feed -edit shared post-
     DELETE /api/feed -delete shared post-
