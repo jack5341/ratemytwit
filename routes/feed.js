@@ -4,9 +4,9 @@ import feed from "../models/feed.js";
 const route = Router()
 
 /* 
-    userToken string
-    description string
-    tweet string
+    userToken String
+    description String
+    tweet String
     date Date
 */
 
@@ -23,7 +23,7 @@ route.post("/feed", async (req,res) => {
         return
     }
 
-    let post = feed({
+    let post = new feed({
         userToken: userToken,
         tweet: tweet,
         description: description,
@@ -35,15 +35,15 @@ route.post("/feed", async (req,res) => {
     res.status(200).send("post is shared successfully.")
 })
 
-/* 
-    p - query = string
+/*
+    p - query = String
 */
 
 route.get("/feed", async (req,res) => {
     const { p } = req.query
-    const posts = await feed.find({}).exec()
-
-    // will implement pagination algorithm to here.
+    const page = p || null
+    const pageLimit = 10
+    const posts = await feed.find({}).sort({ height: page, _id: page }).limit(pageLimit).exec()
     res.status(200).send(posts)
 })
 
@@ -52,7 +52,14 @@ route.put("/feed", (req,res) => {
 })
 
 route.delete("/feed", (req,res) => {
+    const { postId } = req.body
 
-})
+    if (!postId) {
+        res.status(400).send("post id is required arguments")
+        return
+    }
+
+    res.status(200).send()
+}) 
 
 export default route

@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 
 var feedPost = new mongoose.Schema({
     userToken: String,
-    tweet: {
-      type: String
-    },
+    tweet: String,
     description: {
       type: String,
       maxlength: 280
@@ -12,9 +10,7 @@ var feedPost = new mongoose.Schema({
     usefullvote: String,
     mehvote: String,
     wtfvote: String,
-    date: {
-      type: Date
-    }
+    date: Date
 });
   
 export default mongoose.model("feed_posts", feedPost)
