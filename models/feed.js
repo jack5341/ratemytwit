@@ -10,9 +10,11 @@ var feedPost = new mongoose.Schema({
       type: String,
       maxlength: 280
     },
-    usefullvote: String,
-    mehvote: String,
-    wtfvote: String,
+    votes: {
+      upvote: Array,
+      downvote: Array,
+      mehvote: Array
+    },
     date: Date
 });
   
