@@ -9,66 +9,55 @@ const route = Router()
 
 route.post("/login", async (req,res) => {
     const { username, password } = req.body
-
-    const userName = username || ""
-    const passWord = password || ""
     
-    if (username.lenght <= 16) {
-        res.status(400).send("username should be less than 16 character")
+    if (username?.lenght <= 32) {
+        res.status(400).send("username should be less than 32 character")
         return
     }
 
-    if (password.lenght <= 32) {
-        res.status(400).send("password should be less than 16 character")
+    if (password?.lenght <= 256) {
+        res.status(400).send("password should be less than 256 character")
         return
     }
 
-    const isExist = await auth.findOne({ username: userName }).exec()
+    const user = await auth.findOne({ username: username }).exec()
 
-    if(!isExist) {
-        res.status(401).send("this username could not be found in the database")
+    if(!user) {
+        res.status(400).send("username or password is invalid")
         return
     }
 
-    const isMatch = await bcrypt.compare(passWord, isExist.password)
+    const isMatch = await bcrypt.compare(password, user.password)
 
     if(!isMatch) {
-        res.status(401).send("username or password is invalid")
+        res.status(400).send("username or password is invalid")
         return
     }
 
-    const AUTH_TOKEN = jwt.sign({username: isExist.username, _id: isExist.id}, CONSTANTS.SIGN_TOKEN, {
+    const authtoken = jwt.sign({username: isExist.username, _id: isExist.id}, CONSTANTS.SIGN_TOKEN, {
         expiresIn: '7d'
     })
 
-    res.status(200).send(AUTH_TOKEN)
+    res.status(200).send(authtoken)
 })
 
 route.post("/register", async (req,res) => {
     const { username, password } = req.body
 
-    const userName = username || ""
-    const passWord = password || ""
-
-    if (username.lenght <= 16) {
-        res.status(400).send("username should be less than 16 character")
+    if (!username && !password) {
+        res.status(400).send("username and password is argument")
         return
     }
-
-    if (password.lenght <= 32) {
-        res.status(400).send("password should be less than 16 character")
-        return
-    }
-
+    
     const account = {
-        username: userName,
+        username: username,
         password: await bcrypt.hash(passWord, 12),
         date: Date.now()
     }
 
-    const isExist = await auth.findOne({ username: userName }).exec()
+    const user = await auth.findOne({ username: username }).exec()
 
-    if (isExist) {
+    if (user) {
         res.status(409).send("this username is already taken")
         return
     }

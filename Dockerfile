@@ -1,15 +1,13 @@
-FROM node:16-alpine
+FROM node:16-alpine as build-stage
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /app
 
-WORKDIR /home/node/app
-
-COPY package*.json ./
-
-USER node
+COPY package.json ./
 
 RUN npm install
 
-EXPOSE 8080
+COPY ./ .
+
+FROM flashspys/nginx-static
 
 CMD [ "npm", "start" ]
