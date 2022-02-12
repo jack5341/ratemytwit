@@ -12,9 +12,9 @@ const route = Router()
 */
 
 route.post("/feed", authorization, async (req,res) => {
-    const { description, tweet, userToken } = req.body
+    const { description, tweet, ownerId } = req.body
 
-    if (!description && !tweet && !userToken) {
+    if (!description && !tweet && !ownerId) {
         res.status(400).send("description, user token and tweet is required arguments")
         return
     }
@@ -24,9 +24,9 @@ route.post("/feed", authorization, async (req,res) => {
         return
     }
 
-    let post = new feed({
-        userToken: userToken,
-        tweet: tweet,
+    const post = new feed({
+        ownerId: ownerId,
+        tweet: tweet,   
         description: description,
         date: Date.now()
     })
@@ -35,10 +35,6 @@ route.post("/feed", authorization, async (req,res) => {
 
     res.status(200).send("post is shared successfully.")
 })
-
-/*
-    p - query = String
-*/
 
 route.get("/feed", async (req,res) => {
     const { p } = req.query
@@ -52,7 +48,7 @@ route.put("/feed", (req,res) => {
 
 })
 
-route.delete("/feed", (req,res) => {
+route.delete("/feed", authorization, (req,res) => {
     const { postId } = req.body
 
     if (!postId) {

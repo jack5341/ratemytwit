@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
 var feedPost = new mongoose.Schema({
-    userId: String,
+    ownerId: {
+      type: String,
+      required: true
+    },
     tweet: String,
     description: {
       type: String,
