@@ -10,12 +10,16 @@ const route = Router()
 route.post("/login", async (req,res) => {
     const { username, password } = req.body
     
-    if (username?.lenght <= 32) {
+    const maxUsernameLimit = 32
+
+    if (username?.lenght <= maxUsernameLimit) {
         res.status(400).send("username should be less than 32 character")
         return
     }
 
-    if (password?.lenght <= 256) {
+    const maxPassLimit = 256
+
+    if (password?.lenght <= maxPassLimit) {
         res.status(400).send("password should be less than 256 character")
         return
     }
@@ -48,12 +52,6 @@ route.post("/register", async (req,res) => {
         res.status(400).send("username and password is argument")
         return
     }
-    
-    const account = {
-        username: username,
-        password: await bcrypt.hash(password, 12),
-        date: Date.now()
-    }
 
     const user = await auth.findOne({ username: username }).exec()
 
@@ -61,10 +59,22 @@ route.post("/register", async (req,res) => {
         res.status(409).send("this username is already taken")
         return
     }
-
-    new auth(account).save()
     
-    res.status(200).send("register successfully")
+    const salt = 12
+
+    const account = {
+        username: username,
+        password: await bcrypt.hash(password, salt),
+        date: Date.now()
+    }
+
+    const newUser = new auth(account).save()
+    
+    const authtoken = jwt.sign({username: newUser.username, _id: newUser.id}, CONSTANTS.SIGN_TOKEN, {
+        expiresIn: '7d'
+    })
+
+    res.status(200).send(authtoken)
 })
 
 export default route

@@ -7,12 +7,15 @@ const route = Router()
 route.post("/feed", authorization, async (req,res) => {
     const { description, tweet, ownerId } = req.body
 
+    // Use HTTP Validation libraries
     if (!description && !tweet && !ownerId) {
         res.status(400).send("description, user token and tweet is required arguments")
         return
     }
 
-    if (description >= 280) {
+    const descriptionLimit = 280
+
+    if (description >= descriptionLimit) {
         res.status(400).send("description should be less than 280 character")
         return
     }
@@ -26,7 +29,7 @@ route.post("/feed", authorization, async (req,res) => {
 
     await post.save()
 
-    res.status(200).send("post is shared successfully.")
+    res.status(200).send(post)
 })
 
 route.get("/feed", async (req,res) => {
@@ -45,23 +48,24 @@ route.put("/feed", authorization, async (req,res) => {
     const post = await feed.findById(postId).exec()
 
     if (!post) {
-        res.status(400).send("the post could not found in database")
+        res.status(404).send("the post could not found in database")
         return
     }
 
     if (post.ownerId != user._id) {
-        res.status(400).send("you are not owner of this post")
+        res.status(401).send("you are not owner of this post")
         return
     } 
 
-    const updatedPost = {
-        tweet: tweet || "",
-        description: description || ""
+    let updatedPost = {}
+
+    if (tweet) {
+        updatedPost.tweet = tweet
     }
 
-    if (!updatedPost.tweet) delete updatedPost.tweet
-
-    else if (!updatedPost.description) delete updatedPost.description
+    if (description) {
+        updatedPost.description = description
+    }
     
     await feed.updateOne(updatedPost)
     res.status(200).send()
@@ -79,12 +83,12 @@ route.delete("/feed", authorization, async (req,res) => {
     const post = await feed.findById(postId).exec()
 
     if (!post) {
-        res.status(400).send("the post could not found in database")
+        res.status(404).send("the post could not found in database")
         return
     }
 
     if (post.ownerId != user._id) {
-        res.status(400).send("you are not owner of this post")
+        res.status(401).send("you are not owner of this post")
         return
     } 
 
