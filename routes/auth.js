@@ -1,9 +1,9 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
-import auth from "../models/auth.js";
 import jwt from "jsonwebtoken";
 
 import { CONSTANTS } from "../config/constants.js";
+import auth from "../models/auth.js";
 
 const route = Router()
 
