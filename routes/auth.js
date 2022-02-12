@@ -51,7 +51,7 @@ route.post("/register", async (req,res) => {
     
     const account = {
         username: username,
-        password: await bcrypt.hash(passWord, 12),
+        password: await bcrypt.hash(password, 12),
         date: Date.now()
     }
 
