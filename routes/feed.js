@@ -38,7 +38,7 @@ route.post("/feed", authorization, async (req,res) => {
 
 route.get("/feed", async (req,res) => {
     const { p } = req.query
-    const page = p || null
+    const page = p || 0
     const pageLimit = 10
     const posts = await feed.find({}).sort({ height: page, _id: page }).limit(pageLimit).exec()
     res.status(200).send(posts)
@@ -48,13 +48,28 @@ route.put("/feed", (req,res) => {
 
 })
 
-route.delete("/feed", authorization, (req,res) => {
-    const { postId } = req.body
+route.delete("/feed", authorization, async (req,res) => {
+    const { postId } = req.query
+    const user = req.user
 
     if (!postId) {
         res.status(400).send("post id is required arguments")
         return
     }
+
+    const post = await feed.findById(postId).exec()
+
+    if (!post) {
+        res.status(400).send("the post could not found in database")
+        return
+    }
+
+    if (post.ownerId != user._id) {
+        res.status(400).send("you are not owner of this post")
+        return
+    } 
+
+    await feed.findByIdAndDelete(postId)
 
     res.status(200).send()
 }) 

@@ -37,7 +37,7 @@ route.post("/login", async (req,res) => {
         return
     }
 
-    const AUTH_TOKEN = jwt.sign({username: isExist.username, _id: isExist.id, role: 1}, CONSTANTS.SIGN_TOKEN, {
+    const AUTH_TOKEN = jwt.sign({username: isExist.username, _id: isExist.id}, CONSTANTS.SIGN_TOKEN, {
         expiresIn: '7d'
     })
 
