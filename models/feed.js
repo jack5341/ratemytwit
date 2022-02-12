@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 var feedPost = new mongoose.Schema({
-    userToken: String,
+    userId: String,
     tweet: String,
     description: {
       type: String,

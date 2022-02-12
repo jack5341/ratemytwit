@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authorization } from "../middlewares/authorization.js";
 import feed from "../models/feed.js";
 
 const route = Router()
@@ -10,7 +11,7 @@ const route = Router()
     date Date
 */
 
-route.post("/feed", async (req,res) => {
+route.post("/feed", authorization, async (req,res) => {
     const { description, tweet, userToken } = req.body
 
     if (!description && !tweet && !userToken) {
