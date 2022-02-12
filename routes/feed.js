@@ -4,13 +4,6 @@ import feed from "../models/feed.js";
 
 const route = Router()
 
-/* 
-    userToken String
-    description String
-    tweet String
-    date Date
-*/
-
 route.post("/feed", authorization, async (req,res) => {
     const { description, tweet, ownerId } = req.body
 
@@ -44,8 +37,34 @@ route.get("/feed", async (req,res) => {
     res.status(200).send(posts)
 })
 
-route.put("/feed", (req,res) => {
+route.put("/feed", authorization, async (req,res) => {
+    const { postId } = req.query
+    const { description, tweet } = req.body
+    const user = req.user
 
+    const post = await feed.findById(postId).exec()
+
+    if (!post) {
+        res.status(400).send("the post could not found in database")
+        return
+    }
+
+    if (post.ownerId != user._id) {
+        res.status(400).send("you are not owner of this post")
+        return
+    } 
+
+    const updatedPost = {
+        tweet: tweet || "",
+        description: description || ""
+    }
+
+    if (!updatedPost.tweet) delete updatedPost.tweet
+
+    else if (!updatedPost.description) delete updatedPost.description
+    
+    await feed.updateOne(updatedPost)
+    res.status(200).send()
 })
 
 route.delete("/feed", authorization, async (req,res) => {
