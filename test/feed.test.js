@@ -18,8 +18,8 @@ describe('Feed', function () {
 
     describe('GET /api/feed', function () {
         it('should return an object', async function () {
-            req.get("/api/feed")
-                .set('Authorization', 'Bearer ' + token) //set header for this test
+            await req.get("/api/feed")
+                .set('Authorization', 'Bearer ' + token)
                 .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200).then((response) => {
                     assert.ok(typeof response.body == "object")
@@ -34,23 +34,38 @@ describe('Feed', function () {
     //   });
 
     describe('POST /api/feed', function () {
-        it('should return an object', function () {
-            req.post("/api/feed")
+        it('should return an object', async function () {
+            await req.post("/api/feed")
                 .send({
                     description: description,
                     tweet: tweet,
                     ownerId: token
                 })
-                .expect("Content-Type", "application/json")
+                .set('Authorization', 'Bearer ' + token)
+                .expect("Content-Type", "application/json; charset=utf-8")
                 .expect(200).then((response) => {
                     assert.ok(typeof response.body == "object")
                 })
         });
     });
 
-    //   describe('DELETE', function () {
-    //     it('should return a boolean', function () {
-    //       assert.equal([1, 2, 3].indexOf(4), -1);
-    //     });
-    //   });
+    describe('DELETE /api/feed', function () {
+        it('should return an boolean', async function () {
+            let resp = await req.post("/api/feed")
+                .send({
+                    description: description,
+                    tweet: tweet,
+                    ownerId: token
+                })
+                .set('Authorization', 'Bearer ' + token)
+
+            await req.post("/api/feed?postId=" + resp.body._id)
+                .set('Authorization', 'Bearer ' + resp.body.ownerId)
+                .expect("Content-Type", "text/html; charset=utf-8")
+                .expect(200).then((response) => {
+                    assert.ok(typeof response.body == "boolean")
+                })
+        });
+    });
+
 });
