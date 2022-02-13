@@ -1,5 +1,4 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import mongoose from "mongoose"
 import bodyParser from "body-parser"
@@ -15,7 +14,6 @@ var app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(cookieParser());
 app.use("/api", feed)
 app.use("/auth", auth)
 

@@ -12,14 +12,14 @@ route.post("/login", async (req,res) => {
     
     const maxUsernameLimit = 32
 
-    if (username?.lenght <= maxUsernameLimit) {
+    if (username.length <= maxUsernameLimit) {
         res.status(400).send("username should be less than 32 character")
         return
     }
 
     const maxPassLimit = 256
 
-    if (password?.lenght <= maxPassLimit) {
+    if (password.length <= maxPassLimit) {
         res.status(400).send("password should be less than 256 character")
         return
     }
@@ -38,7 +38,7 @@ route.post("/login", async (req,res) => {
         return
     }
 
-    const authtoken = jwt.sign({username: isExist.username, _id: isExist.id}, CONSTANTS.SIGN_TOKEN, {
+    const authtoken = jwt.sign({username: user.username, _id: user.id}, CONSTANTS.SIGN_TOKEN, {
         expiresIn: '7d'
     })
 

@@ -68,7 +68,7 @@ route.put("/feed", authorization, async (req,res) => {
     }
     
     await feed.updateOne(updatedPost)
-    res.status(200).send()
+    res.status(200).send(true)
 })
 
 route.delete("/feed", authorization, async (req,res) => {
@@ -94,7 +94,7 @@ route.delete("/feed", authorization, async (req,res) => {
 
     await feed.findByIdAndDelete(postId)
 
-    res.status(200).send()
+    res.status(200).send(true)
 }) 
 
 export default route
