@@ -27,12 +27,6 @@ describe('Feed', function () {
         });
     });
 
-    //   describe('PUT', function () {
-    //     it('should return a boolean', function () {
-    //       assert.equal([1, 2, 3].indexOf(4), -1);
-    //     });
-    //   });
-
     describe('POST /api/feed', function () {
         it('should return an object', async function () {
             await req.post("/api/feed")
@@ -53,19 +47,27 @@ describe('Feed', function () {
         it('should return an boolean', async function () {
             let resp = await req.post("/api/feed")
                 .send({
-                    description: description,
-                    tweet: tweet,
+                    description: "description",
+                    tweet: "tweet",
                     ownerId: token
                 })
                 .set('Authorization', 'Bearer ' + token)
 
-            await req.post("/api/feed?postId=" + resp.body._id)
-                .set('Authorization', 'Bearer ' + resp.body.ownerId)
+            const postId = resp.body._id
+
+            req.post("/api/feed?postId=" + postId)
+                .set('Authorization', 'Bearer ' + token)
                 .expect("Content-Type", "text/html; charset=utf-8")
                 .expect(200).then((response) => {
-                    assert.ok(typeof response.body == "boolean")
+                    assert.ok(response.text == true)
                 })
         });
     });
+
+    // describe('PUT', function () {
+    //     it('should return a boolean', function () {
+    //         assert.equal([1, 2, 3].indexOf(4), -1);
+    //     });
+    // });
 
 });

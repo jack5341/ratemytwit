@@ -16,6 +16,7 @@ route.post("/feed", authorization, async (req,res) => {
     const descriptionLimit = 280
 
     if (description >= descriptionLimit) {
+        console.log(description);
         res.status(400).send("description should be less than 280 character")
         return
     }
