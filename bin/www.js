@@ -7,6 +7,7 @@
 import app from '../app.js';
 import debug from "debug"
 import http from 'http';
+import logger from 'morgan';
 
 /**
  * Get port from environment and store in Express.
@@ -14,6 +15,11 @@ import http from 'http';
 
 var port = normalizePort(process.env.PORT || '3000');
 console.log("Server is alive at ", port )
+
+if (process.env.NODE_ENV !== 'test') {
+  app.use(logger('dev'));
+}
+
 app.set('port', port);
 
 /**

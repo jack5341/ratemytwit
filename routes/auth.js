@@ -12,14 +12,14 @@ route.post("/login", async (req,res) => {
     
     const maxUsernameLimit = 32
 
-    if (username.length <= maxUsernameLimit) {
+    if (username.length > maxUsernameLimit) {
         res.status(400).send("username should be less than 32 character")
         return
     }
 
     const maxPassLimit = 256
 
-    if (password.length <= maxPassLimit) {
+    if (password.length > maxPassLimit) {
         res.status(400).send("password should be less than 256 character")
         return
     }
@@ -60,7 +60,7 @@ route.post("/register", async (req,res) => {
         return
     }
     
-    const salt = 12
+    const salt = 11
 
     const account = {
         username: username,
